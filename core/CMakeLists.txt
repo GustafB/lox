@@ -1,5 +1,11 @@
-add_library(lox STATIC lox.cpp)
-add_library(scanner STATIC scanner.cpp)
-add_library(token STATIC token.cpp)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
 
-add_executable(lox-interpreter lox.m.cpp lox)
+set(HEADER_FILES scanner.hpp token.hpp lox.hpp)
+
+add_library(scanner STATIC scanner.cpp ${HEADER_FILFES})
+add_library(token STATIC token.cpp ${HEADER_FILFES})
+add_library(lox STATIC lox.cpp ${HEADER_FILFES})
+
+set(LIBRARIES lox scanner token)
+
+add_executable(lox-repl lox.m.cpp ${LIBRARIES} ${HEADER_FILFES})
