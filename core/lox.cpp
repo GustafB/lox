@@ -1,7 +1,6 @@
 #include "lox.hpp"
 #include "scanner.hpp"
 #include "token.hpp"
-#include "scanner.hpp"
 
 #include <iostream>
 #include <fstream>

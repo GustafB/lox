@@ -1,5 +1,3 @@
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
-
 set(HEADER_FILES scanner.hpp token.hpp lox.hpp)
 
 add_library(scanner STATIC scanner.cpp ${HEADER_FILFES})
