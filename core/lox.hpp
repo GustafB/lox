@@ -15,13 +15,12 @@ public:
 
 public:
     Lox(): d_hadError(false) { }
-    // ~Lox();
 
-    void runFile(std::string);
+    void runFile(const std::string) const;
     void runPrompt();
-    void run(std::string);
+    void run(const std::string) const;
 private:
-    void readFile(std::string, std::vector<char>*);
+    void readFile(const std::string, std::vector<char>*) const;
 
     bool d_hadError;
 

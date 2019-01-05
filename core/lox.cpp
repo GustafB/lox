@@ -6,12 +6,12 @@
 #include <fstream>
 #include <string>
 #include <vector>
-#include <istream>
+#include <forward_list>
 
 namespace LoxInterpreter {
 
 void
-Lox::runFile(std::string filePath)
+Lox::runFile(const std::string filePath) const
 {
     std::vector<char> inputChars;
     readFile(filePath, &inputChars);
@@ -29,6 +29,10 @@ Lox::runPrompt()
 
         std::getline(std::cin, currentLine);
         std::cin.clear();
+
+        if (currentLine == "exit()" || currentLine == "exit")
+            return;
+
         run(currentLine);
 
         d_hadError = false;
@@ -38,8 +42,8 @@ Lox::runPrompt()
 
 
 void
-Lox::readFile(std::string filePath,
-              std::vector<char>* bytes)
+Lox::readFile(const std::string filePath,
+              std::vector<char>* bytes) const
 {
     try
     {
@@ -57,15 +61,15 @@ Lox::readFile(std::string filePath,
 }
 
 void
-Lox::run(std::string source)
+Lox::run(const std::string source) const
 {
     if (d_hadError == true)
         std::cerr << "Error: system malfunction, exiting gracefully\n";
 
     Scanner scanner = Scanner(source);
-    std::list<Token> tokens;
+    std::forward_list<Token> tokens;
 
-    scanner.scanTokens(tokens);
+    scanner.scanTokens();
     for (auto &token: scanner.tokens())
     {
         std::cout << token.lexeme() << "\n";
