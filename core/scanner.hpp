@@ -7,27 +7,29 @@
 #include <list>
 #include <unordered_map>
 
-
 namespace LoxInterpreter {
 
     class Scanner {
     public:
         Scanner(std::string source):
-            d_source(source), d_current(0), d_start(0), d_line(0) { loadIdentifiers(); };
-        void scanTokens(std::list<Token>&);
+              d_source(source)
+            , d_current(0)
+            , d_start(0)
+            , d_line(0) { loadIdentifiers(); };
+        void scanTokens();
         void scanToken();
         char advance();
-        void addToken(Token::TOKEN_TYPE type);
+        void addToken(const Token::TOKEN_TYPE type);
 
         template <typename T>
-        void addToken(Token::TOKEN_TYPE type, const T& literal);
+        void addToken(const Token::TOKEN_TYPE type, const T& literal);
 
         const std::list<Token>& tokens() const { return d_tokens; }
 
     private:
 
         bool endOfFile() const { return d_current >= d_source.size(); }
-        bool matchChar(char expected);
+        bool matchChar(const char expected);
         char peek() const;
         char peekNext() const;
         void readString();

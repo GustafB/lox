@@ -10,13 +10,12 @@
 
 namespace {
 
-
 }
 
 namespace LoxInterpreter {
 
     void
-    Scanner::scanTokens(std::list<Token>&)
+    Scanner::scanTokens()
     {
         while (!endOfFile())
         {
@@ -31,6 +30,7 @@ namespace LoxInterpreter {
     void
     Scanner::scanToken()
     {
+        std::cout << "scanToken\n";
         char c = advance();
         switch (c) {
         case '(': addToken(Token::LEFT_PAREN); break;
@@ -85,14 +85,14 @@ namespace LoxInterpreter {
     }
 
     void
-    Scanner::addToken(Token::TOKEN_TYPE type)
+    Scanner::addToken(const Token::TOKEN_TYPE type)
     {
         addToken(type, NULL);
     }
 
     template <typename T>
     void
-    Scanner::addToken(Token::TOKEN_TYPE type, const T& literal)
+    Scanner::addToken(const Token::TOKEN_TYPE type, const T& literal)
     {
         std::string text = d_source.substr(d_start, d_current - d_start);
         std::cout << "addToken | " << text << " | " << literal << '\n';
@@ -101,7 +101,7 @@ namespace LoxInterpreter {
     }
 
     bool
-    Scanner::matchChar(char expected)
+    Scanner::matchChar(const char expected)
     {
         if (endOfFile()) return false;
         if (d_source[d_current] != expected) return false;
@@ -172,7 +172,7 @@ namespace LoxInterpreter {
             advance();
 
         std::string text = d_source.substr(d_start, d_current - d_start);
-        auto type_itr = (d_identifiers.find(text));
+        auto type_itr = d_identifiers.find(text);
 
         Token::TOKEN_TYPE type;
 
@@ -187,18 +187,20 @@ namespace LoxInterpreter {
     void
     Scanner::readBlockComment()
     {
-        while (peek() != '*' && peekNext() != '/')
+        std::cout << "readBlockComment" << std::endl;
+        if (endOfFile())
         {
-            if (peek() == '\n')
-                d_line++;
-
-            if (endOfFile())
-            {
-                std::cerr << "Error: unterminated string\n";
-                return;
-            }
-
+            std::cerr << "Error: unterminated string\n";
+            return;
+        }
+        else if (peek() == '*' && peekNext() == '/')
+        {
+            std::cout << "Exit:" << peek() << peekNext() << std::endl;
+            return;
+        }
+        else {
             advance();
+            readBlockComment();
         }
 
         advance(); advance();
@@ -208,22 +210,22 @@ namespace LoxInterpreter {
     Scanner::loadIdentifiers()
     {
         d_identifiers = {
-            {"and",    Token::AND},
-            {"class",  Token::CLASS},
-            {"else",   Token::ELSE},
-            {"false",  Token::FALSE},
-            {"for",    Token::FOR},
-            {"fun",    Token::FUN},
-            {"if",     Token::IF},
-            {"nil",    Token::NIL},
-            {"or",     Token::OR},
-            {"print",  Token::PRINT},
-            {"return", Token::RETURN},
-            {"super",  Token::SUPER},
-            {"this",   Token::THIS},
-            {"true",   Token::TRUE},
-            {"var",    Token::VAR},
-            {"while",  Token::WHILE}
+            { "and",    Token::AND },
+            { "class",  Token::CLASS },
+            { "else",   Token::ELSE },
+            { "false",  Token::FALSE },
+            { "for",    Token::FOR },
+            { "fun",    Token::FUN },
+            { "if",     Token::IF },
+            { "nil",    Token::NIL },
+            { "or",     Token::OR },
+            { "print",  Token::PRINT },
+            { "return", Token::RETURN },
+            { "super",  Token::SUPER },
+            { "this",   Token::THIS },
+            { "true",   Token::TRUE },
+            { "var",    Token::VAR },
+            { "while",  Token::WHILE }
         };
     }
 
