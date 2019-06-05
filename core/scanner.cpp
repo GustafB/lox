@@ -14,8 +14,8 @@ namespace {
 
 namespace LoxInterpreter {
 
-    void
-    Scanner::scanTokens()
+    auto
+    Scanner::scanTokens() -> void
     {
         while (!endOfFile())
         {
@@ -23,30 +23,30 @@ namespace LoxInterpreter {
             scanToken();
         }
 
-        d_tokens.push_back(Token(Token::END_OF_FILE, "", NULL, 0));
+        d_tokens.push_back(Token(Token_Type::END_OF_FILE, "", NULL, 0));
         return;
     }
 
-    void
-    Scanner::scanToken()
+    auto
+    Scanner::scanToken() -> void
     {
         std::cout << "scanToken\n";
         char c = advance();
         switch (c) {
-        case '(': addToken(Token::LEFT_PAREN); break;
-        case ')': addToken(Token::RIGHT_PAREN); break;
-        case '{': addToken(Token::LEFT_BRACE); break;
-        case '}': addToken(Token::RIGHT_BRACE); break;
-        case ',': addToken(Token::COMMA); break;
-        case '.': addToken(Token::DOT); break;
-        case '-': addToken(Token::MINUS); break;
-        case '+': addToken(Token::PLUS); break;
-        case ';': addToken(Token::SEMICOLON); break;
-        case '*': addToken(Token::STAR); break;
-        case '!': addToken(matchChar('=') ? Token::BANG_EQUAL : Token::BANG); break;
-        case '=': addToken(matchChar('=') ? Token::EQUAL_EQUAL : Token::EQUAL); break;
-        case '<': addToken(matchChar('=') ? Token::LESS_EQUAL : Token::LESS); break;
-        case '>': addToken(matchChar('=') ? Token::GREATER_EQUAL : Token::GREATER); break;
+        case '(': addToken(Token_Type::LEFT_PAREN); break;
+        case ')': addToken(Token_Type::RIGHT_PAREN); break;
+        case '{': addToken(Token_Type::LEFT_BRACE); break;
+        case '}': addToken(Token_Type::RIGHT_BRACE); break;
+        case ',': addToken(Token_Type::COMMA); break;
+        case '.': addToken(Token_Type::DOT); break;
+        case '-': addToken(Token_Type::MINUS); break;
+        case '+': addToken(Token_Type::PLUS); break;
+        case ';': addToken(Token_Type::SEMICOLON); break;
+        case '*': addToken(Token_Type::STAR); break;
+        case '!': addToken(matchChar('=') ? Token_Type::BANG_EQUAL : Token_Type::BANG); break;
+        case '=': addToken(matchChar('=') ? Token_Type::EQUAL_EQUAL : Token_Type::EQUAL); break;
+        case '<': addToken(matchChar('=') ? Token_Type::LESS_EQUAL : Token_Type::LESS); break;
+        case '>': addToken(matchChar('=') ? Token_Type::GREATER_EQUAL : Token_Type::GREATER); break;
         case '/':
             if (matchChar('/'))
                 while (peek() != '\n' && !endOfFile())
@@ -54,7 +54,7 @@ namespace LoxInterpreter {
             else if (matchChar('*'))
                 readBlockComment();
             else
-                addToken(Token::SLASH);
+                addToken(Token_Type::SLASH);
             break;
         case ' ':
         case '\r':
@@ -77,22 +77,22 @@ namespace LoxInterpreter {
         }
     }
 
-    char
-    Scanner::advance()
+    auto
+    Scanner::advance() -> char
     {
         d_current++;
         return d_source[d_current - 1];
     }
 
-    void
-    Scanner::addToken(const Token::TOKEN_TYPE type)
+    auto
+    Scanner::addToken(const Token_Type type) -> void
     {
         addToken(type, NULL);
     }
 
     template <typename T>
-    void
-    Scanner::addToken(const Token::TOKEN_TYPE type, const T& literal)
+    auto
+    Scanner::addToken(const Token_Type type, const T& literal) -> void
     {
         std::string text = d_source.substr(d_start, d_current - d_start);
         std::cout << "addToken | " << text << " | " << literal << '\n';
@@ -100,8 +100,8 @@ namespace LoxInterpreter {
         return;
     }
 
-    bool
-    Scanner::matchChar(const char expected)
+    auto
+    Scanner::matchChar(const char expected) -> bool
     {
         if (endOfFile()) return false;
         if (d_source[d_current] != expected) return false;
@@ -111,22 +111,22 @@ namespace LoxInterpreter {
         return true;
     }
 
-    char
-    Scanner::peek() const
+    auto
+    Scanner::peek() const -> char
     {
         if (endOfFile()) return '\0';
         return d_source[d_current];
     }
 
-    char
-    Scanner::peekNext() const
+    auto
+    Scanner::peekNext() const -> char
     {
         if (endOfFile()) return '\0';
         return d_source[d_current + 1];
     }
 
-    void
-    Scanner::readString()
+    auto
+    Scanner::readString() -> void
     {
         std::cout << "readString\n";
         while (peek() != '"' && !endOfFile())
@@ -145,11 +145,11 @@ namespace LoxInterpreter {
         advance();
 
         std::string stringLiteral = d_source.substr(d_start + 1, d_current - 1 - (d_start + 1));
-        addToken(Token::STRING, stringLiteral);
+        addToken(Token_Type::STRING, stringLiteral);
     }
 
-    void
-    Scanner::readNumber()
+    auto
+    Scanner::readNumber() -> void
     {
         std::cout << "readNumber\n";
         while (std::isdigit(peek()))
@@ -161,11 +161,11 @@ namespace LoxInterpreter {
         while (std::isdigit(peek()))
             advance();
 
-        addToken(Token::NUMBER, std::stod(d_source.substr(d_start, d_current - d_start)));
+        addToken(Token_Type::NUMBER, std::stod(d_source.substr(d_start, d_current - d_start)));
     }
 
-    void
-    Scanner::readIdentifier()
+    auto
+    Scanner::readIdentifier() -> void
     {
         std::cout << "readIdentifier\n";
         while (std::isalnum(peek()))
@@ -174,18 +174,18 @@ namespace LoxInterpreter {
         std::string text = d_source.substr(d_start, d_current - d_start);
         auto type_itr = d_identifiers.find(text);
 
-        Token::TOKEN_TYPE type;
+        Token_Type type;
 
         if (type_itr == d_identifiers.end())
-            type = Token::IDENTIFIER;
+            type = Token_Type::IDENTIFIER;
         else
             type = type_itr->second;
 
         addToken(type);
     }
 
-    void
-    Scanner::readBlockComment()
+    auto
+    Scanner::readBlockComment() -> void
     {
         std::cout << "readBlockComment" << std::endl;
         if (endOfFile())
@@ -206,26 +206,26 @@ namespace LoxInterpreter {
         advance(); advance();
     }
 
-    void
-    Scanner::loadIdentifiers()
+    auto
+    Scanner::loadIdentifiers() -> void
     {
         d_identifiers = {
-            { "and",    Token::AND },
-            { "class",  Token::CLASS },
-            { "else",   Token::ELSE },
-            { "false",  Token::FALSE },
-            { "for",    Token::FOR },
-            { "fun",    Token::FUN },
-            { "if",     Token::IF },
-            { "nil",    Token::NIL },
-            { "or",     Token::OR },
-            { "print",  Token::PRINT },
-            { "return", Token::RETURN },
-            { "super",  Token::SUPER },
-            { "this",   Token::THIS },
-            { "true",   Token::TRUE },
-            { "var",    Token::VAR },
-            { "while",  Token::WHILE }
+            { "and",    Token_Type::AND },
+            { "class",  Token_Type::CLASS },
+            { "else",   Token_Type::ELSE },
+            { "false",  Token_Type::FALSE },
+            { "for",    Token_Type::FOR },
+            { "fun",    Token_Type::FUN },
+            { "if",     Token_Type::IF },
+            { "nil",    Token_Type::NIL },
+            { "or",     Token_Type::OR },
+            { "print",  Token_Type::PRINT },
+            { "return", Token_Type::RETURN },
+            { "super",  Token_Type::SUPER },
+            { "this",   Token_Type::THIS },
+            { "true",   Token_Type::TRUE },
+            { "var",    Token_Type::VAR },
+            { "while",  Token_Type::WHILE }
         };
     }
 

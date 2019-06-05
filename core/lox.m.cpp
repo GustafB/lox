@@ -21,4 +21,6 @@ int main(int argv, char* argc[])
     {
         interpreter.runPrompt();
     }
+
+    return 0;
 }

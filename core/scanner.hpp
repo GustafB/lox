@@ -19,10 +19,10 @@ namespace LoxInterpreter {
         void scanTokens();
         void scanToken();
         char advance();
-        void addToken(const Token::TOKEN_TYPE type);
+        void addToken(const Token_Type type);
 
         template <typename T>
-        void addToken(const Token::TOKEN_TYPE type, const T& literal);
+        void addToken(const Token_Type type, const T& literal);
 
         const std::list<Token>& tokens() const { return d_tokens; }
 
@@ -43,7 +43,7 @@ namespace LoxInterpreter {
         size_t d_start;
         size_t d_line;
         std::list<Token> d_tokens;
-        std::unordered_map<std::string, Token::TOKEN_TYPE> d_identifiers;
+        std::unordered_map<std::string, Token_Type> d_identifiers;
     };
 
 
