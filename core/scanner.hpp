@@ -9,42 +9,43 @@
 
 namespace LoxInterpreter {
 
-    class Scanner {
-    public:
-        Scanner(std::string source):
-              d_source(source)
-            , d_current(0)
-            , d_start(0)
-            , d_line(0) { loadIdentifiers(); };
-        void scanTokens();
-        void scanToken();
-        char advance();
-        void addToken(const Token_Type type);
+class Scanner {
+  public:
+    Scanner(std::string source):
+    d_source(source)
+    , d_current(std::begin(source))
+    , d_start(std::begin(source))
+    , d_line(0) { loadIdentifiers(); };
+    void scanTokens();
+    void scanToken();
+    char advance();
+    void addToken(const Token_Type type);
 
-        template <typename T>
-        void addToken(const Token_Type type, const T& literal);
+    template <typename T>
+    void addToken(const Token_Type type, const T& literal);
 
-        const std::list<Token>& tokens() const { return d_tokens; }
+    const std::list<Token>& tokens() const { return d_tokens; }
 
-    private:
+  private:
+    using StringIterator = std::string::iterator;
 
-        bool endOfFile() const { return d_current >= d_source.size(); }
-        bool matchChar(const char expected);
-        char peek() const;
-        char peekNext() const;
-        void readString();
-        void readNumber();
-        void readIdentifier();
-        void readBlockComment();
-        void loadIdentifiers();
+    auto endOfFile() const -> bool;
+    auto matchChar(const char expected) -> bool;
+    auto peek() const -> char ;
+    auto peekNext() const -> char ;
+    auto readString() -> void;
+    auto readNumber() -> void;
+    auto readIdentifier() -> void;
+    auto readBlockComment() -> void;
+    auto loadIdentifiers() -> void;
 
-        std::string d_source;
-        size_t d_current;
-        size_t d_start;
-        size_t d_line;
-        std::list<Token> d_tokens;
-        std::unordered_map<std::string, Token_Type> d_identifiers;
-    };
+    std::string d_source;
+    StringIterator d_current;
+    StringIterator d_start;
+    size_t d_line;
+    std::list<Token> d_tokens;
+    std::unordered_map<std::string, Token_Type> d_identifiers;
+};
 
 
 
